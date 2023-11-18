@@ -21,7 +21,12 @@ struct AddNoteView: View {
     init(notes: Binding<[Note]>, note: Note? = nil) {
         _notes = notes
         _note = State(initialValue: note)
+        if let editingNote = note {
+            _title = State(initialValue: editingNote.title)
+            _rawContent = State(initialValue: editingNote.content)
+        }
     }
+
     
     var body: some View {
         VStack(spacing: 0) {
@@ -39,11 +44,21 @@ struct AddNoteView: View {
                     .focused($isContentFocused) // Bind the focus state to the TextEditor
                     .frame(minHeight: 500)
                 Button("Save") {
-                    let newNote = Note(title: title, content: rawContent)
-                    notes.append(newNote)
+                    if let editingNote = note {
+                        // Find and update the existing note
+                        if let index = notes.firstIndex(where: { $0.id == editingNote.id }) {
+                            notes[index].title = title
+                            notes[index].content = rawContent
+                        }
+                    } else {
+                        // Add a new note
+                        let newNote = Note(title: title, content: rawContent)
+                        notes.append(newNote)
+                    }
                     presentationMode.wrappedValue.dismiss()
                 }
                 .disabled(title.isEmpty || rawContent.isEmpty)
+
             }
             
         }

@@ -19,9 +19,8 @@ struct NotesListView: View {
             List {
                 // Looping through each note
                 ForEach(notes) { note in
-                    // Changing the navigation link to lead to AddNoteView
                     NavigationLink(destination: AddNoteView(notes: $notes, note: note)) {
-                        Text(note.title) // Displaying the note's title
+                        Text(note.title)
                     }
                 }
             }
