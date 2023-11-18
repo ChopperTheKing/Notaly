@@ -44,20 +44,10 @@ struct AddNoteView: View {
                     .focused($isContentFocused) // Bind the focus state to the TextEditor
                     .frame(minHeight: 500)
                 Button("Save") {
-                    if let editingNote = note {
-                        // Find and update the existing note
-                        if let index = notes.firstIndex(where: { $0.id == editingNote.id }) {
-                            notes[index].title = title
-                            notes[index].content = rawContent
-                        }
-                    } else {
-                        // Add a new note
-                        let newNote = Note(title: title, content: rawContent)
-                        notes.append(newNote)
-                    }
                     presentationMode.wrappedValue.dismiss()
                 }
                 .disabled(title.isEmpty || rawContent.isEmpty)
+
 
             }
             
@@ -67,6 +57,7 @@ struct AddNoteView: View {
         .onDisappear {
             saveNote() // Save the note when the view disappears
         }
+
         .onAppear {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                 self.isTitleFocused = true // Focus on the TextEditor when the view appears
@@ -75,11 +66,19 @@ struct AddNoteView: View {
     }
     
     private func saveNote() {
-        if !title.isEmpty || !rawContent.isEmpty {
+        if let editingNote = note {
+            // Update existing note
+            if let index = notes.firstIndex(where: { $0.id == editingNote.id }) {
+                notes[index].title = title
+                notes[index].content = rawContent
+            }
+        } else if !title.isEmpty || !rawContent.isEmpty {
+            // Create a new note only if title or content is not empty
             let newNote = Note(title: title, content: rawContent)
             notes.append(newNote)
         }
     }
+
 
     // Function to add bullet points
     func addBulletPoints(_ newText: String) {
