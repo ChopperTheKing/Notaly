@@ -26,9 +26,6 @@ struct CustomNavigationBarView: View {
                 .font(.headline)
 
             Spacer()
-
-            // Custom Cancel Button
-            Button("Cancel", action: onDismiss)
         }
         .padding()
         .background(Color(.systemBackground)) // Match the system background color

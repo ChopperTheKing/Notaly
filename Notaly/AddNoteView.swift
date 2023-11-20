@@ -46,16 +46,8 @@ struct AddNoteView: View {
                             rawContent = "• "
                         }
                     }
-                    .frame(minHeight: 500)
-
-                Button("Save") {
-                    presentationMode.wrappedValue.dismiss()
-                }
-                .disabled(title.isEmpty || rawContent.isEmpty)
-
-
+                    .frame(minHeight: 600)
             }
-            
         }
         .ignoresSafeArea(.keyboard)
         .navigationBarBackButtonHidden(true)
@@ -83,7 +75,6 @@ struct AddNoteView: View {
             notes.append(newNote)
         }
     }
-
 
     // Function to add bullet points
     func addBulletPoints(_ newText: String) {
@@ -127,4 +118,3 @@ struct AddNoteView_Previews: PreviewProvider {
         AddNoteView(notes: $previewNotes)
     }
 }
-
