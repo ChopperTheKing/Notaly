@@ -18,7 +18,6 @@
 		493D5DB42B0286080060EBC4 /* NotalyUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 493D5DB32B0286080060EBC4 /* NotalyUITestsLaunchTests.swift */; };
 		493D5DC12B0286440060EBC4 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 493D5DC02B0286430060EBC4 /* Models.swift */; };
 		493D5DC32B0286E60060EBC4 /* NotesListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 493D5DC22B0286E60060EBC4 /* NotesListView.swift */; };
-		493D5DC52B02880E0060EBC4 /* NoteDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 493D5DC42B02880E0060EBC4 /* NoteDetailView.swift */; };
 		493D5DC72B028FD90060EBC4 /* CustomNavbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 493D5DC62B028FD90060EBC4 /* CustomNavbar.swift */; };
 		493D5DC92B0299C70060EBC4 /* AddNoteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 493D5DC82B0299C60060EBC4 /* AddNoteView.swift */; };
 /* End PBXBuildFile section */
@@ -55,7 +54,6 @@
 		493D5DB32B0286080060EBC4 /* NotalyUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotalyUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		493D5DC02B0286430060EBC4 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
 		493D5DC22B0286E60060EBC4 /* NotesListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotesListView.swift; sourceTree = "<group>"; };
-		493D5DC42B02880E0060EBC4 /* NoteDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteDetailView.swift; sourceTree = "<group>"; };
 		493D5DC62B028FD90060EBC4 /* CustomNavbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomNavbar.swift; sourceTree = "<group>"; };
 		493D5DC82B0299C60060EBC4 /* AddNoteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddNoteView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -115,7 +113,6 @@
 				493D5D9C2B0286070060EBC4 /* Notaly.xcdatamodeld */,
 				493D5D972B0286070060EBC4 /* Preview Content */,
 				493D5DC02B0286430060EBC4 /* Models.swift */,
-				493D5DC42B02880E0060EBC4 /* NoteDetailView.swift */,
 				493D5DC62B028FD90060EBC4 /* CustomNavbar.swift */,
 				493D5DC82B0299C60060EBC4 /* AddNoteView.swift */,
 				4903603D2B02D34F00370784 /* KeyboardResponsive.swift */,
@@ -283,7 +280,6 @@
 				493D5DC72B028FD90060EBC4 /* CustomNavbar.swift in Sources */,
 				493D5D9E2B0286070060EBC4 /* Notaly.xcdatamodeld in Sources */,
 				493D5D922B0286060060EBC4 /* NotalyApp.swift in Sources */,
-				493D5DC52B02880E0060EBC4 /* NoteDetailView.swift in Sources */,
 				493D5DC32B0286E60060EBC4 /* NotesListView.swift in Sources */,
 				493D5DC92B0299C70060EBC4 /* AddNoteView.swift in Sources */,
 				493D5DC12B0286440060EBC4 /* Models.swift in Sources */,
@@ -458,6 +454,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -487,6 +484,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

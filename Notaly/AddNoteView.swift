@@ -26,7 +26,6 @@ struct AddNoteView: View {
             _rawContent = State(initialValue: editingNote.content)
         }
     }
-
     
     var body: some View {
         VStack(spacing: 0) {
@@ -42,7 +41,13 @@ struct AddNoteView: View {
                     }
                 TextEditor(text: $rawContent.onChange(addBulletPoints))
                     .focused($isContentFocused) // Bind the focus state to the TextEditor
+                    .onChange(of: isContentFocused) { focused in
+                        if focused && rawContent.isEmpty {
+                            rawContent = "• "
+                        }
+                    }
                     .frame(minHeight: 500)
+
                 Button("Save") {
                     presentationMode.wrappedValue.dismiss()
                 }
@@ -82,16 +87,23 @@ struct AddNoteView: View {
 
     // Function to add bullet points
     func addBulletPoints(_ newText: String) {
-        let lines = newText.split(separator: "\n", omittingEmptySubsequences: false)
-        let bulletedLines = lines.map { line -> String in
-            if line.starts(with: "• ") || line.isEmpty {
-                return String(line)
-            } else {
-                return "• " + line
+        if newText.hasSuffix("\n") && !newText.hasSuffix("\n\n") {
+            // If the new text ends with a newline (but not two newlines), add a bullet point
+            rawContent = newText + "• "
+        } else {
+            // Otherwise, process as usual
+            let lines = newText.split(separator: "\n", omittingEmptySubsequences: false)
+            let bulletedLines = lines.map { line -> String in
+                if line.starts(with: "• ") || line.isEmpty {
+                    return String(line)
+                } else {
+                    return "• " + line
+                }
             }
+            rawContent = bulletedLines.joined(separator: "\n")
         }
-        rawContent = bulletedLines.joined(separator: "\n")
     }
+
 }
 
 // Extension to provide onChange functionality for the TextEditor
@@ -115,3 +127,4 @@ struct AddNoteView_Previews: PreviewProvider {
         AddNoteView(notes: $previewNotes)
     }
 }
+

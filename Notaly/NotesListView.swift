@@ -8,44 +8,40 @@
 import SwiftUI
 
 struct NotesListView: View {
-    // State variables to manage the list of notes and the state of showing the add note view
     @State private var notes = [Note]()
     @State private var showingAddNote = false
 
     var body: some View {
-        // Using NavigationStack for navigation
         NavigationStack {
-            // List to display notes
             List {
-                // Looping through each note
                 ForEach(notes) { note in
                     NavigationLink(destination: AddNoteView(notes: $notes, note: note)) {
                         Text(note.title)
                     }
                 }
+                .onDelete(perform: deleteNote) // Swipe to delete functionality
             }
-            // Adding a toolbar to the List
+            .navigationTitle("Lists")
+            .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                // Toolbar item on the leading side of the navigation bar
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Text("Notes")
-                        .font(.largeTitle) // Increasing the font size of "Notes"
-                        .bold() // Making the text bold
-                        .padding(.top, 40) // Adding top padding
+                    Image(systemName: "folder")
                 }
-                // Toolbar item on the trailing side of the navigation bar
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: { showingAddNote = true }) {
-                        Image(systemName: "plus") // Using a system image for the button
+                        Image(systemName: "plus")
                     }
-                    .padding(.top, 20) // Adding top padding to the button
                 }
             }
-            // Presenting the AddNoteView when showingAddNote is true
             .navigationDestination(isPresented: $showingAddNote) {
-                AddNoteView(notes: $notes) // Passing the notes array to AddNoteView
+                AddNoteView(notes: $notes)
             }
         }
+    }
+
+    // Function to delete a note
+    private func deleteNote(at offsets: IndexSet) {
+        notes.remove(atOffsets: offsets)
     }
 }
 
