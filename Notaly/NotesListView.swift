@@ -10,6 +10,7 @@ import SwiftUI
 struct NotesListView: View {
     @State private var notes = [Note]()
     @State private var showingAddNote = false
+    @State private var showingFolders = false
 
     var body: some View {
         NavigationStack {
@@ -25,7 +26,9 @@ struct NotesListView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Image(systemName: "folder")
+                    Button(action: { showingFolders = true }) {
+                        Image(systemName: "folder")
+                    }
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: { showingAddNote = true }) {
@@ -33,9 +36,13 @@ struct NotesListView: View {
                     }
                 }
             }
+            .sheet(isPresented: $showingFolders) {
+                FoldersView() // The view to show in the sheet
+            }
             .navigationDestination(isPresented: $showingAddNote) {
                 AddNoteView(notes: $notes)
             }
+
         }
     }
 
