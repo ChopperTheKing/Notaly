@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		4903603E2B02D34F00370784 /* KeyboardResponsive.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4903603D2B02D34F00370784 /* KeyboardResponsive.swift */; };
+		491DC23E2B10F8B9002B17B5 /* CustomTabBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 491DC23D2B10F8B9002B17B5 /* CustomTabBarView.swift */; };
 		493D5D922B0286060060EBC4 /* NotalyApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 493D5D912B0286060060EBC4 /* NotalyApp.swift */; };
 		493D5D962B0286070060EBC4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 493D5D952B0286070060EBC4 /* Assets.xcassets */; };
 		493D5D992B0286070060EBC4 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 493D5D982B0286070060EBC4 /* Preview Assets.xcassets */; };
@@ -42,6 +43,7 @@
 
 /* Begin PBXFileReference section */
 		4903603D2B02D34F00370784 /* KeyboardResponsive.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardResponsive.swift; sourceTree = "<group>"; };
+		491DC23D2B10F8B9002B17B5 /* CustomTabBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTabBarView.swift; sourceTree = "<group>"; };
 		493D5D8E2B0286060060EBC4 /* Notaly.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Notaly.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		493D5D912B0286060060EBC4 /* NotalyApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotalyApp.swift; sourceTree = "<group>"; };
 		493D5D952B0286070060EBC4 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -119,6 +121,7 @@
 				4903603D2B02D34F00370784 /* KeyboardResponsive.swift */,
 				4954539D2B0D2C8C006249D0 /* FoldersView.swift */,
 				493D5DC02B0286430060EBC4 /* Models.swift */,
+				491DC23D2B10F8B9002B17B5 /* CustomTabBarView.swift */,
 			);
 			path = Notaly;
 			sourceTree = "<group>";
@@ -279,6 +282,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4903603E2B02D34F00370784 /* KeyboardResponsive.swift in Sources */,
+				491DC23E2B10F8B9002B17B5 /* CustomTabBarView.swift in Sources */,
 				493D5D9B2B0286070060EBC4 /* Persistence.swift in Sources */,
 				493D5DC72B028FD90060EBC4 /* CustomNavbar.swift in Sources */,
 				493D5D9E2B0286070060EBC4 /* Notaly.xcdatamodeld in Sources */,

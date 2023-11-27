@@ -12,6 +12,7 @@ struct NotesListView: View {
     @State private var showingAddNote = false
     @State private var showingFolders = false
     @State private var selectedNote: Note? // For full screen cover
+    @State private var selectedTab = 0
     
     var body: some View {
         NavigationStack {
@@ -89,10 +90,11 @@ struct NotesListView: View {
             .sheet(isPresented: $showingFolders) {
                 FoldersView()
             }
-            .navigationDestination(isPresented: $showingAddNote) {
+            .sheet(isPresented: $showingAddNote) {
                 AddNoteView(notes: $notes)
             }
         }
+        CustomTabBarView(selectedTab: $selectedTab)
     }
     
     private func deleteNote(at offsets: IndexSet) {
