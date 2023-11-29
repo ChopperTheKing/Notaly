@@ -21,6 +21,7 @@
 		493D5DC32B0286E60060EBC4 /* NotesListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 493D5DC22B0286E60060EBC4 /* NotesListView.swift */; };
 		493D5DC72B028FD90060EBC4 /* CustomNavbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 493D5DC62B028FD90060EBC4 /* CustomNavbar.swift */; };
 		493D5DC92B0299C70060EBC4 /* AddNoteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 493D5DC82B0299C60060EBC4 /* AddNoteView.swift */; };
+		494D8E442B17CC460002A30E /* CustomNavView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 494D8E432B17CC460002A30E /* CustomNavView.swift */; };
 		4954539E2B0D2C8C006249D0 /* FoldersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4954539D2B0D2C8C006249D0 /* FoldersView.swift */; };
 /* End PBXBuildFile section */
 
@@ -59,6 +60,7 @@
 		493D5DC22B0286E60060EBC4 /* NotesListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotesListView.swift; sourceTree = "<group>"; };
 		493D5DC62B028FD90060EBC4 /* CustomNavbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomNavbar.swift; sourceTree = "<group>"; };
 		493D5DC82B0299C60060EBC4 /* AddNoteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddNoteView.swift; sourceTree = "<group>"; };
+		494D8E432B17CC460002A30E /* CustomNavView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomNavView.swift; sourceTree = "<group>"; };
 		4954539D2B0D2C8C006249D0 /* FoldersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoldersView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -122,6 +124,7 @@
 				4954539D2B0D2C8C006249D0 /* FoldersView.swift */,
 				493D5DC02B0286430060EBC4 /* Models.swift */,
 				491DC23D2B10F8B9002B17B5 /* CustomTabBarView.swift */,
+				494D8E432B17CC460002A30E /* CustomNavView.swift */,
 			);
 			path = Notaly;
 			sourceTree = "<group>";
@@ -290,6 +293,7 @@
 				4954539E2B0D2C8C006249D0 /* FoldersView.swift in Sources */,
 				493D5DC32B0286E60060EBC4 /* NotesListView.swift in Sources */,
 				493D5DC92B0299C70060EBC4 /* AddNoteView.swift in Sources */,
+				494D8E442B17CC460002A30E /* CustomNavView.swift in Sources */,
 				493D5DC12B0286440060EBC4 /* Models.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

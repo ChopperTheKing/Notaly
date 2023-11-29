@@ -35,12 +35,15 @@ struct AddNoteView: View {
 
             Form {
                 TextField("Title", text: $title)
-                    .focused($isTitleFocused) // Bind the focus state to the TextEditor
-                    .onSubmit { // Handle the Enter key press
-                        isContentFocused = true // Move focus to the content field
+                    .font(.custom("Copperplate", size: 18)) // Applying Copperplate font here
+                    .focused($isTitleFocused)
+                    .onSubmit {
+                        isContentFocused = true
                     }
+
                 TextEditor(text: $rawContent.onChange(addBulletPoints))
-                    .focused($isContentFocused) // Bind the focus state to the TextEditor
+                    .font(.custom("Copperplate", size: 16)) // Applying Copperplate font here
+                    .focused($isContentFocused)
                     .onChange(of: isContentFocused) { focused in
                         if focused && rawContent.isEmpty {
                             rawContent = "• "
@@ -52,12 +55,11 @@ struct AddNoteView: View {
         .ignoresSafeArea(.keyboard)
         .navigationBarBackButtonHidden(true)
         .onDisappear {
-            saveNote() // Save the note when the view disappears
+            saveNote()
         }
-
         .onAppear {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                self.isTitleFocused = true // Focus on the TextEditor when the view appears
+                self.isTitleFocused = true
             }
         }
     }

@@ -10,24 +10,16 @@ import SwiftUI
 
 struct CustomNavigationBarView: View {
     var title: String
-    var onDismiss: () -> Void
+    var onBack: () -> Void
 
     var body: some View {
         HStack {
-            // Custom Back Button
-            Button(action: onDismiss) {
-                Image(systemName: "arrow.left")
-            }
-
             Spacer()
-
-            // Title
             Text(title)
-                .font(.headline)
-
+                .font(.custom("Copperplate", size: 20)) // Apply Copperplate font here
             Spacer()
         }
         .padding()
-        .background(Color(.systemBackground)) // Match the system background color
+        .background(Color.gray.opacity(0.2)) // Just an example styling
     }
 }
