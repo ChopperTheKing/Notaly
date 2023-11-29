@@ -80,22 +80,29 @@ struct AddNoteView: View {
 
     // Function to add bullet points
     func addBulletPoints(_ newText: String) {
-        if newText.hasSuffix("\n") && !newText.hasSuffix("\n\n") {
-            // If the new text ends with a newline (but not two newlines), add a bullet point
-            rawContent = newText + "• "
-        } else {
-            // Otherwise, process as usual
-            let lines = newText.split(separator: "\n", omittingEmptySubsequences: false)
-            let bulletedLines = lines.map { line -> String in
-                if line.starts(with: "• ") || line.isEmpty {
-                    return String(line)
-                } else {
-                    return "• " + line
-                }
+        let lines = newText.split(separator: "\n", omittingEmptySubsequences: false)
+        var processedLines: [String] = []
+
+        for line in lines {
+            if line.isEmpty {
+                // If the line is empty, it's a new line after pressing Enter
+                processedLines.append("• ")
+            } else if line == "• " {
+                // If the line is only a bullet point, remove it (backspace pressed on an empty bullet line)
+                continue
+            } else {
+                // If the line starts with a bullet point or has text, keep it
+                let adjustedLine = line.starts(with: "• ") ? line : "• " + line
+                processedLines.append(String(adjustedLine))
             }
-            rawContent = bulletedLines.joined(separator: "\n")
         }
+
+        rawContent = processedLines.joined(separator: "\n")
     }
+
+
+
+
 
 }
 
