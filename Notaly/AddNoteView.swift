@@ -82,25 +82,36 @@ struct AddNoteView: View {
     func addBulletPoints(_ newText: String) {
         let lines = newText.split(separator: "\n", omittingEmptySubsequences: false)
         var processedLines: [String] = []
+        var lastLineWasBullet = false
 
         for line in lines {
             if line.isEmpty {
-                // If the line is empty, it's a new line after pressing Enter
-                processedLines.append("• ")
-            } else if line == "• " {
-                // If the line is only a bullet point, remove it (backspace pressed on an empty bullet line)
-                continue
+                if lastLineWasBullet {
+                    // If the last line was a bullet point, and now it's empty,
+                    // it means backspace was pressed. Skip adding a new bullet.
+                    lastLineWasBullet = false
+                    continue
+                } else {
+                    // If the line is empty, it's a new line after pressing Enter
+                    processedLines.append("• ")
+                    lastLineWasBullet = true
+                }
             } else {
-                // If the line starts with a bullet point or has text, keep it
-                let adjustedLine = line.starts(with: "• ") ? line : "• " + line
-                processedLines.append(String(adjustedLine))
+                lastLineWasBullet = false
+
+                if line.trimmingCharacters(in: .whitespaces) == "•" {
+                    // If the line is only a bullet point (with optional spaces), remove it
+                    // (backspace pressed on an empty bullet line)
+                    continue
+                } else {
+                    // If the line starts with a bullet point or has text, keep it
+                    let adjustedLine = line.starts(with: "• ") ? line : "• " + line
+                    processedLines.append(String(adjustedLine))
+                }
             }
         }
-
         rawContent = processedLines.joined(separator: "\n")
     }
-
-
 
 
 
