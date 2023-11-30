@@ -50,6 +50,16 @@ struct AddNoteView: View {
                         }
                     }
                     .frame(minHeight: 600)
+                    .gesture(DragGesture(minimumDistance: 30, coordinateSpace: .local)
+                        .onEnded { value in
+                            if value.translation.width > 0 {
+                                // Right swipe - Indent the line
+                                indentLine(direction: .right)
+                            } else if value.translation.width < 0 {
+                                // Left swipe - Outdent the line
+                                indentLine(direction: .left)
+                            }
+                        })
             }
         }
         .ignoresSafeArea(.keyboard)
@@ -63,6 +73,33 @@ struct AddNoteView: View {
             }
         }
     }
+    
+    private func indentLine(direction: SwipeDirection) {
+        // Split the content into lines
+        var lines = rawContent.components(separatedBy: .newlines)
+
+        // Determine the current line index based on the cursor position
+        // This is a simplified approach. In a real app, you would need to find the line where the cursor currently is.
+        let currentLineIndex = lines.count - 1 // Assuming the cursor is at the last line for simplicity
+
+        guard currentLineIndex >= 0 && currentLineIndex < lines.count else { return }
+
+        let currentLine = lines[currentLineIndex]
+
+        switch direction {
+        case .right:
+            // Indent the line by adding a tab or spaces
+            lines[currentLineIndex] = "\t" + currentLine
+
+        case .left:
+            // Outdent the line by removing a tab or spaces if present
+            lines[currentLineIndex] = currentLine.replacingOccurrences(of: "^\t", with: "", options: .regularExpression)
+        }
+
+        // Join the lines back together
+        rawContent = lines.joined(separator: "\n")
+    }
+
     
     private func saveNote() {
         if let editingNote = note {
@@ -82,36 +119,32 @@ struct AddNoteView: View {
     func addBulletPoints(_ newText: String) {
         let lines = newText.split(separator: "\n", omittingEmptySubsequences: false)
         var processedLines: [String] = []
-        var lastLineWasBullet = false
+        var lastIndentation = ""
 
         for line in lines {
             if line.isEmpty {
-                if lastLineWasBullet {
-                    // If the last line was a bullet point, and now it's empty,
-                    // it means backspace was pressed. Skip adding a new bullet.
-                    lastLineWasBullet = false
-                    continue
-                } else {
-                    // If the line is empty, it's a new line after pressing Enter
-                    processedLines.append("• ")
-                    lastLineWasBullet = true
-                }
+                // If the line is empty, it's a new line after pressing Enter
+                // Use the last known indentation and add a bullet point
+                processedLines.append("\(lastIndentation)• ")
             } else {
-                lastLineWasBullet = false
+                // Extract the indentation from the current line
+                let currentIndentation = line.prefix(while: { $0 == "\t" || $0 == " " })
+                lastIndentation = String(currentIndentation)
 
                 if line.trimmingCharacters(in: .whitespaces) == "•" {
-                    // If the line is only a bullet point (with optional spaces), remove it
-                    // (backspace pressed on an empty bullet line)
+                    // If the line is only a bullet point, remove it
                     continue
                 } else {
-                    // If the line starts with a bullet point or has text, keep it
-                    let adjustedLine = line.starts(with: "• ") ? line : "• " + line
+                    // Add a bullet point if it's not already there
+                    let adjustedLine = line.starts(with: "\(currentIndentation)• ") ? line : "\(currentIndentation)• " + line.trimmingCharacters(in: .whitespaces)
                     processedLines.append(String(adjustedLine))
                 }
             }
         }
         rawContent = processedLines.joined(separator: "\n")
     }
+
+
 
 
 
@@ -137,4 +170,8 @@ struct AddNoteView_Previews: PreviewProvider {
     static var previews: some View {
         AddNoteView(notes: $previewNotes)
     }
+}
+
+enum SwipeDirection {
+    case left, right
 }
