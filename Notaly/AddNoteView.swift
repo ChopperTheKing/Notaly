@@ -13,8 +13,8 @@ struct AddNoteView: View {
     @State private var rawContent = ""
     @State private var note: Note?
     
-    @FocusState private var isTitleFocused: Bool // Focus state for the content field
-    @FocusState private var isContentFocused: Bool // Focus state for the content field
+    @FocusState private var isTitleFocused: Bool
+    @FocusState private var isContentFocused: Bool
     
     @Environment(\.presentationMode) var presentationMode
 
@@ -28,40 +28,53 @@ struct AddNoteView: View {
     }
     
     var body: some View {
-        VStack(spacing: 0) {
-            CustomNavigationBarView(title: "New Note") {
-                presentationMode.wrappedValue.dismiss()
-            }
+        VStack(spacing: -10) { // Maintain the reduced spacing
+            // Title box
+            ZStack {
+                Rectangle()
+                    .foregroundColor(Color(red: 0.97, green: 0.97, blue: 0.97))
+                    .frame(width: 329, height: 60)
+                    .cornerRadius(2)
+                    .shadow(color: .black.opacity(0.25), radius: 4, x: 0, y: 2)
 
-            Form {
                 TextField("Title", text: $title)
-                    .font(.custom("Copperplate", size: 18)) // Applying Copperplate font here
                     .focused($isTitleFocused)
                     .onSubmit {
+                        // Shift focus to the content when 'Enter' is pressed
                         isContentFocused = true
+                        addInitialBulletPoint()
                     }
-
-                TextEditor(text: $rawContent.onChange(addBulletPoints))
-                    .font(.custom("Copperplate", size: 16)) // Applying Copperplate font here
-                    .focused($isContentFocused)
-                    .onChange(of: isContentFocused) { focused in
-                        if focused && rawContent.isEmpty {
-                            rawContent = "• "
-                        }
-                    }
-                    .frame(minHeight: 600)
-                    .gesture(DragGesture(minimumDistance: 30, coordinateSpace: .local)
-                        .onEnded { value in
-                            if value.translation.width > 0 {
-                                // Right swipe - Indent the line
-                                indentLine(direction: .right)
-                            } else if value.translation.width < 0 {
-                                // Left swipe - Outdent the line
-                                indentLine(direction: .left)
-                            }
-                        })
+                    .font(.custom("Copperplate", size: 24))
+                    .foregroundColor(Color(red: 87 / 255, green: 87 / 255, blue: 87 / 255))
+                    .padding(.horizontal, 30)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
+            .padding(.top, -20)
+            .padding(.horizontal, 20)
+            .padding(.bottom, -10)
+
+            // Content area
+            TextEditor(text: $rawContent.onChange(addBulletPoints))
+                .font(.custom("Copperplate", size: 20))
+                .focused($isContentFocused)
+                .foregroundColor(Color(red: 87 / 255, green: 87 / 255, blue: 87 / 255))
+                .padding(EdgeInsets(top: 5, leading: 32, bottom: 0, trailing: 32)) // Further reduced top padding for content
+                .frame(minHeight: 600)
+                .cornerRadius(2)
+                .shadow(color: .black.opacity(0.25), radius: 4, x: 0, y: 2)
+                .gesture(DragGesture(minimumDistance: 30, coordinateSpace: .local)
+                    .onEnded { value in
+                        if value.translation.width > 0 {
+                            // Right swipe - Indent the line
+                            indentLine(direction: .right)
+                        } else if value.translation.width < 0 {
+                            // Left swipe - Outdent the line
+                            indentLine(direction: .left)
+                        }
+                    })
         }
+        .padding(.top, 10)
+        .background(Color(red: 0.97, green: 0.97, blue: 0.97))
         .ignoresSafeArea(.keyboard)
         .navigationBarBackButtonHidden(true)
         .onDisappear {
@@ -71,6 +84,35 @@ struct AddNoteView: View {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                 self.isTitleFocused = true
             }
+        }
+    }
+
+
+
+
+    // Add the saveNote function here
+    private func saveNote() {
+        if let editingNote = note {
+            // Update existing note
+            if let index = notes.firstIndex(where: { $0.id == editingNote.id }) {
+                notes[index].title = title
+                notes[index].content = rawContent
+            }
+        } else if !title.isEmpty || !rawContent.isEmpty {
+            // Create a new note only if title or content is not empty
+            let newNote = Note(title: title, content: rawContent)
+            notes.append(newNote)
+        }
+    }
+
+
+    private var focusedText: String {
+        if isTitleFocused {
+            return "Editing Title"
+        } else if isContentFocused {
+            return "Editing Content"
+        } else {
+            return "New Note"
         }
     }
     
@@ -101,23 +143,12 @@ struct AddNoteView: View {
     }
 
     
-    private func saveNote() {
-        if let editingNote = note {
-            // Update existing note
-            if let index = notes.firstIndex(where: { $0.id == editingNote.id }) {
-                notes[index].title = title
-                notes[index].content = rawContent
-            }
-        } else if !title.isEmpty || !rawContent.isEmpty {
-            // Create a new note only if title or content is not empty
-            let newNote = Note(title: title, content: rawContent)
-            notes.append(newNote)
-        }
-    }
+
 
     // Function to add bullet points
     func addBulletPoints(_ newText: String) {
-        let lines = newText.split(separator: "\n", omittingEmptySubsequences: false)
+        // Split the content into lines
+        var lines = newText.split(separator: "\n", omittingEmptySubsequences: false)
         var processedLines: [String] = []
         var lastIndentation = ""
 
@@ -131,20 +162,31 @@ struct AddNoteView: View {
                 let currentIndentation = line.prefix(while: { $0 == "\t" || $0 == " " })
                 lastIndentation = String(currentIndentation)
 
-                if line.trimmingCharacters(in: .whitespaces) == "•" {
-                    // If the line is only a bullet point, remove it
-                    continue
+                let trimmedLine = line.trimmingCharacters(in: .whitespaces)
+
+                // Check if the line already has a bullet point
+                if trimmedLine.hasPrefix("•") {
+                    // Line already starts with a bullet point, keep it as is
+                    processedLines.append(String(line))
                 } else {
-                    // Add a bullet point if it's not already there
-                    let adjustedLine = line.starts(with: "\(currentIndentation)• ") ? line : "\(currentIndentation)• " + line.trimmingCharacters(in: .whitespaces)
-                    processedLines.append(String(adjustedLine))
+                    // Line does not have a bullet point, add it
+                    processedLines.append("\(lastIndentation)• \(trimmedLine)")
                 }
             }
         }
+
+        // Join the processed lines back together
         rawContent = processedLines.joined(separator: "\n")
     }
 
 
+
+    private func addInitialBulletPoint() {
+        // Add an initial bullet point if the content is empty
+        if rawContent.isEmpty {
+            rawContent = "• "
+        }
+    }
 
 
 
@@ -175,3 +217,4 @@ struct AddNoteView_Previews: PreviewProvider {
 enum SwipeDirection {
     case left, right
 }
+
