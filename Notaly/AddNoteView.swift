@@ -147,8 +147,7 @@ struct AddNoteView: View {
 
     // Function to add bullet points
     func addBulletPoints(_ newText: String) {
-        // Split the content into lines
-        var lines = newText.split(separator: "\n", omittingEmptySubsequences: false)
+        let lines = newText.split(separator: "\n", omittingEmptySubsequences: false)
         var processedLines: [String] = []
         var lastIndentation = ""
 
@@ -162,20 +161,16 @@ struct AddNoteView: View {
                 let currentIndentation = line.prefix(while: { $0 == "\t" || $0 == " " })
                 lastIndentation = String(currentIndentation)
 
-                let trimmedLine = line.trimmingCharacters(in: .whitespaces)
-
-                // Check if the line already has a bullet point
-                if trimmedLine.hasPrefix("•") {
-                    // Line already starts with a bullet point, keep it as is
-                    processedLines.append(String(line))
+                if line.trimmingCharacters(in: .whitespaces) == "•" {
+                    // If the line is only a bullet point, remove it
+                    continue
                 } else {
-                    // Line does not have a bullet point, add it
-                    processedLines.append("\(lastIndentation)• \(trimmedLine)")
+                    // Add a bullet point if it's not already there
+                    let adjustedLine = line.starts(with: "\(currentIndentation)• ") ? line : "\(currentIndentation)• " + line.trimmingCharacters(in: .whitespaces)
+                    processedLines.append(String(adjustedLine))
                 }
             }
         }
-
-        // Join the processed lines back together
         rawContent = processedLines.joined(separator: "\n")
     }
 
