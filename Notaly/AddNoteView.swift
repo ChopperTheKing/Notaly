@@ -16,7 +16,9 @@ struct AddNoteView: View {
     @FocusState private var isTitleFocused: Bool
     @FocusState private var isContentFocused: Bool
     
+    
     @Environment(\.presentationMode) var presentationMode
+    @Environment(\.dismiss) var dismiss
 
     init(notes: Binding<[Note]>, note: Note? = nil) {
         _notes = notes
@@ -29,6 +31,34 @@ struct AddNoteView: View {
     
     var body: some View {
         VStack(spacing: -10) { // Maintain the reduced spacing
+            HStack {
+                // Back Button
+                Button(action: {
+                    presentationMode.wrappedValue.dismiss()
+                }) {
+                    HStack {
+                        Image(systemName: "arrow.backward")
+                        Text("Back")
+                    }
+                }
+                .padding()
+
+                Spacer()
+
+                // Cancel Button
+                Button("Cancel") {
+                    dismiss()
+                }
+                .padding()
+
+                // Save Button
+                Button("Save") {
+                    // Action to save changes
+                    saveNote()
+                    presentationMode.wrappedValue.dismiss()
+                }
+                .padding()
+            }
             // Title box
             ZStack {
                 Rectangle()

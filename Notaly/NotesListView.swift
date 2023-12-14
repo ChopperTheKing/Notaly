@@ -9,10 +9,12 @@ import SwiftUI
 
 struct NotesListView: View {
     @State private var notes = [Note]()
-    @State private var showingAddNote = false
     @State private var showingFolders = false
-    @State private var selectedNote: Note? // For sheet
     @State private var selectedTab = 0
+    @State private var showingAddNote = false // State to control the presentation of AddNoteView
+    @State private var selectedNote: Note?
+    @State private var activeNote: Note? = nil // State to control navigation
+
     
     var body: some View {
         NavigationStack {
@@ -21,79 +23,113 @@ struct NotesListView: View {
                 VStack {
                     CustomNavigationView(
                         leadingAction: { showingFolders.toggle() },
-                        trailingAction: { showingAddNote.toggle() },
+                        trailingAction: { showingAddNote = true }, // Sets the state to true to activate NavigationLink
                         logo: Image("logo")
                     )
-                    //.padding()
                     .padding([.horizontal, .top])
                     .background(Color.white)
                     .foregroundColor(.black)
+                    
+                    
                     List {
-                        Section(header:
-                                    HStack {
-                            Text("Lists")
-                                .font(.custom("Copperplate", size: 64))
-                                .padding(.leading, 32)
-                                .padding(.top, 24)
-                                .padding(.bottom, 32)
-                                .foregroundColor(Color(red: 87 / 255, green: 87 / 255, blue: 87 / 255))
-                            
-                            Spacer()
-                        }
-                            .frame(height: 68, alignment: .leading)
-                            .listRowInsets(EdgeInsets())
-                        ) {
+                        Section(header: Text("Lists").font(.custom("Copperplate", size: 64))) {
                             ForEach(notes) { note in
-                                Button(action: {
-                                    selectedNote = note
-                                }) {
-                                    ZStack {
-                                        Rectangle()
-                                            .foregroundColor(Color(red: 0.97, green: 0.97, blue: 0.97))
-                                            .frame(width: 329, height: 60)
-                                            .cornerRadius(2)
-                                            .shadow(color: .black.opacity(0.25), radius: 4.5, x: 0, y: 4)
-                                        HStack {
-                                            Text(note.title)
-                                                .font(.custom("Copperplate", size: 24))
-                                                .foregroundColor(Color(red: 87 / 255, green: 87 / 255, blue: 87 / 255))
-                                                .padding(.leading, 20)
-                                            Spacer()
+                                HStack {
+                                    Button(action: {
+                                        activeNote = note
+                                    }) {
+                                        ZStack {
+                                            Rectangle()
+                                                .foregroundColor(Color(red: 0.97, green: 0.97, blue: 0.97))
+                                                .frame(width: 329, height: 60)
+                                                .cornerRadius(2)
+                                                .shadow(color: .black.opacity(0.25), radius: 4.5, x: 0, y: 4)
+                                            HStack {
+                                                Text(note.title)
+                                                    .font(.custom("Copperplate", size: 24))
+                                                    .foregroundColor(Color(red: 87 / 255, green: 87 / 255, blue: 87 / 255))
+                                                    .padding(.leading, 20)
+                                                Spacer()
+                                            }
                                         }
                                     }
+                                    .buttonStyle(PlainButtonStyle())
+                                    .background(
+                                        NavigationLink("", destination: AddNoteView(notes: $notes, note: note), isActive: Binding(
+                                            get: { self.activeNote == note },
+                                            set: { _ in }
+                                        )).hidden()
+                                    )
+                                    Spacer()
+                                    
+                                    // Invisible NavigationLink
+                                    NavigationLink(destination: AddNoteView(notes: $notes, note: note)) {
+                                        EmptyView()
+                                    }
+                                    .opacity(0)
                                 }
                                 .frame(width: 329, height: 60, alignment: .leading)
                                 .listRowBackground(Color.clear)
                                 .listRowSeparator(.hidden)
-                                .buttonStyle(PlainButtonStyle())
-                                .fullScreenCover(item: $selectedNote) { note in
-                                    AddNoteView(notes: $notes, note: note)
-                                }
                             }
                             .onDelete(perform: deleteNote)
                             .padding(.horizontal)
                         }
+                        .foregroundColor(Color(red: 87 / 255, green: 87 / 255, blue: 87 / 255))
                     }
                     .listStyle(.plain)
-                }
-                .sheet(item: $selectedNote, onDismiss: { selectedNote = nil }) { note in
-                    AddNoteView(notes: $notes, note: note)
-                }
-                .sheet(isPresented: $showingFolders) {
-                    Text("Folders View")
-                }
-                .sheet(isPresented: $showingAddNote) {
-                    AddNoteView(notes: $notes)
+                    
+                    NavigationLink(destination: AddNoteView(notes: $notes), isActive: $showingAddNote) {
+                        EmptyView()
+                    }
                 }
             }
         }
-        //CustomTabBarView(selectedTab: $selectedTab)
     }
     
     private func deleteNote(at offsets: IndexSet) {
         notes.remove(atOffsets: offsets)
     }
 }
+
+struct HeaderView: View {
+    var body: some View {
+        HStack {
+            Text("Lists")
+                .font(.custom("Copperplate", size: 64))
+                .padding(.leading, 32)
+                .padding(.top, 24)
+                .padding(.bottom, 32)
+                .foregroundColor(Color(red: 87 / 255, green: 87 / 255, blue: 87 / 255))
+            Spacer()
+        }
+        .frame(height: 68, alignment: .leading)
+        .listRowInsets(EdgeInsets())
+    }
+}
+
+
+struct NoteRowView: View {
+    var note: Note
+    
+    var body: some View {
+        ZStack {
+            Rectangle()
+                .foregroundColor(Color(red: 0.97, green: 0.97, blue: 0.97))
+                .frame(width: 329, height: 60)
+                .cornerRadius(2)
+                .shadow(color: .black.opacity(0.25), radius: 4.5, x: 0, y: 4)
+            HStack {
+                Text(note.title)
+                    .font(.custom("Copperplate", size: 24))
+                    .foregroundColor(Color(red: 87 / 255, green: 87 / 255, blue: 87 / 255))
+                    .padding(.leading, 20)
+                Spacer()
+            }
+        }
+    }
+}
+
 
 struct NotesListView_Previews: PreviewProvider {
     static var previews: some View {
@@ -115,3 +151,4 @@ extension View {
         modifier(HideDisclosureIndicator())
     }
 }
+
