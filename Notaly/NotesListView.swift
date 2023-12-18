@@ -14,6 +14,7 @@ struct NotesListView: View {
     @State private var showingAddNote = false // State to control the presentation of AddNoteView
     @State private var selectedNote: Note?
     @State private var activeNote: Note? = nil // State to control navigation
+    @State private var isNoteViewActive = false
 
     
     var body: some View {
@@ -23,7 +24,7 @@ struct NotesListView: View {
                 VStack {
                     CustomNavigationView(
                         leadingAction: { showingFolders.toggle() },
-                        trailingAction: { showingAddNote = true }, // Sets the state to true to activate NavigationLink
+                        trailingAction: { isNoteViewActive = true }, // Sets the state to true to activate NavigationLink
                         logo: Image("logo")
                     )
                     .padding([.horizontal, .top])
@@ -79,8 +80,8 @@ struct NotesListView: View {
                     }
                     .listStyle(.plain)
                     
-                    NavigationLink(destination: AddNoteView(notes: $notes), isActive: $showingAddNote) {
-                        EmptyView()
+                    .navigationDestination(isPresented: $isNoteViewActive) {
+                        AddNoteView(notes: $notes) // Adjust as per your AddNoteView initializer
                     }
                 }
             }
