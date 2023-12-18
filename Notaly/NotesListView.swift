@@ -62,12 +62,6 @@ struct NotesListView: View {
                                         )).hidden()
                                     )
                                     Spacer()
-                                    
-                                    // Invisible NavigationLink
-                                    NavigationLink(destination: AddNoteView(notes: $notes, note: note)) {
-                                        EmptyView()
-                                    }
-                                    .opacity(0)
                                 }
                                 .frame(width: 329, height: 60, alignment: .leading)
                                 .listRowBackground(Color.clear)
