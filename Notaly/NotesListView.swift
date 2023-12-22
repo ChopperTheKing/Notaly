@@ -37,7 +37,12 @@ struct NotesListView: View {
                             ForEach(notes) { note in
                                 HStack {
                                     Button(action: {
-                                        activeNote = note
+                                        // Reset activeNote to nil before setting it to the current note
+                                        self.activeNote = nil
+                                        // Small delay to ensure the state change is recognized
+                                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                            self.activeNote = note
+                                        }
                                     }) {
                                         ZStack {
                                             Rectangle()
