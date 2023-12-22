@@ -6,6 +6,72 @@
 //
 
 import SwiftUI
+import UIKit
+
+struct UITextViewWrapper: UIViewRepresentable {
+    @Binding var text: String
+    var onDone: (() -> Void)?
+
+    func makeUIView(context: Context) -> UITextView {
+        let textView = UITextView()
+        textView.delegate = context.coordinator
+        textView.backgroundColor = UIColor(red: 0.97, green: 0.97, blue: 0.97, alpha: 1)
+        textView.font = UIFont(name: "Copperplate", size: 20)
+        textView.textColor = UIColor(red: 87 / 255, green: 87 / 255, blue: 87 / 255, alpha: 1)
+        textView.isScrollEnabled = true
+        textView.isEditable = true
+        textView.isUserInteractionEnabled = true
+        textView.contentInset = UIEdgeInsets(top: 5, left: 20, bottom: 5, right: 20)
+        if nil != onDone {
+            textView.returnKeyType = .done
+        }
+        return textView
+    }
+
+    func updateUIView(_ uiView: UITextView, context: Context) {
+        uiView.text = text
+    }
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator(self)
+    }
+
+    class Coordinator: NSObject, UITextViewDelegate {
+        var parent: UITextViewWrapper
+
+        init(_ textViewWrapper: UITextViewWrapper) {
+            self.parent = textViewWrapper
+        }
+
+        func textViewDidChange(_ textView: UITextView) {
+            self.parent.text = textView.text
+        }
+
+        func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+            if text == "\n" {
+                // Insert bullet point when 'Enter' is pressed
+                let newText = (textView.text as NSString).replacingCharacters(in: range, with: text)
+                let insertionPoint = range.location + text.count
+                textView.text = newText.insertingBulletPoint(at: insertionPoint)
+                
+                // Move the cursor after the bullet point
+                let newPosition = textView.position(from: textView.beginningOfDocument, offset: insertionPoint + 2)
+                textView.selectedTextRange = textView.textRange(from: newPosition!, to: newPosition!)
+                return false
+            }
+            return true
+        }
+    }
+}
+
+private extension String {
+    func insertingBulletPoint(at index: Int) -> String {
+        let prefixIndex = self.index(self.startIndex, offsetBy: index)
+        let prefix = self[..<prefixIndex]
+        let suffix = self[prefixIndex...]
+        return "\(prefix)• \(suffix)"
+    }
+}
 
 struct AddNoteView: View {
     @Binding var notes: [Note]
@@ -30,91 +96,95 @@ struct AddNoteView: View {
     }
     
     var body: some View {
-        VStack(spacing: -10) { // Maintain the reduced spacing
-            HStack {
-                // Back Button
-                Button(action: {
-                    presentationMode.wrappedValue.dismiss()
-                }) {
-                    HStack {
-                        Image(systemName: "arrow.backward")
-                        Text("Back")
+        ZStack{
+            Color.white.ignoresSafeArea()
+            VStack(spacing: -10) { // Maintain the reduced spacing
+                HStack {
+                    // Back Button
+                    Button(action: {
+                        presentationMode.wrappedValue.dismiss()
+                    }) {
+                        HStack {
+                            Image(systemName: "arrow.backward")
+                            Text("Back")
+                        }
                     }
-                }
-                .padding()
+                    .padding()
 
-                Spacer()
+                    Spacer()
 
-                // Cancel Button
-                Button("Cancel") {
-                    dismiss()
-                }
-                .padding()
+                    // Cancel Button
+                    Button("Cancel") {
+                        dismiss()
+                    }
+                    .padding()
 
-                // Save Button
-                Button("Save") {
-                    // Action to save changes
-                    saveNote()
-                    presentationMode.wrappedValue.dismiss()
+                    // Save Button
+                    Button("Save") {
+                        // Action to save changes
+                        saveNote()
+                        presentationMode.wrappedValue.dismiss()
+                    }
+                    .padding()
                 }
-                .padding()
-            }
-            // Title box
-            ZStack {
-                Rectangle()
-                    .foregroundColor(Color(red: 0.97, green: 0.97, blue: 0.97))
-                    .frame(width: 329, height: 60)
+                // Title box
+                ZStack {
+                    Rectangle()
+                        .foregroundColor(Color(red: 0.97, green: 0.97, blue: 0.97))
+                        .frame(width: 329, height: 60)
+                        .cornerRadius(2)
+                        .shadow(color: .black.opacity(0.25), radius: 4, x: 0, y: 2)
+
+                    TextField("Title", text: $title)
+                        .focused($isTitleFocused)
+                        .onSubmit {
+                            // Shift focus to the content when 'Enter' is pressed
+                            isContentFocused = true
+                            addInitialBulletPoint()
+                        }
+                        .font(.custom("Copperplate", size: 24))
+                        .foregroundColor(Color(red: 87 / 255, green: 87 / 255, blue: 87 / 255))
+                        .padding(.horizontal, 30)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                }
+                .padding(.top, -20)
+                .padding(.horizontal, 20)
+                .padding(.bottom, -10)
+
+                // Content area
+                UITextViewWrapper(text: $rawContent)
+                    .frame(minHeight: 600) // Set the height for your UITextView
+                    .font(.custom("Copperplate", size: 20))
+                    .focused($isContentFocused)
+                    .foregroundColor(Color(red: 87 / 255, green: 87 / 255, blue: 87 / 255))
+                    .padding(EdgeInsets(top: 5, leading: 32, bottom: 0, trailing: 32)) // Further reduced top padding for content
+                    .frame(minHeight: 600)
                     .cornerRadius(2)
                     .shadow(color: .black.opacity(0.25), radius: 4, x: 0, y: 2)
-
-                TextField("Title", text: $title)
-                    .focused($isTitleFocused)
-                    .onSubmit {
-                        // Shift focus to the content when 'Enter' is pressed
-                        isContentFocused = true
-                        addInitialBulletPoint()
-                    }
-                    .font(.custom("Copperplate", size: 24))
-                    .foregroundColor(Color(red: 87 / 255, green: 87 / 255, blue: 87 / 255))
-                    .padding(.horizontal, 30)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .gesture(DragGesture(minimumDistance: 30, coordinateSpace: .local)
+                        .onEnded { value in
+                            if value.translation.width > 0 {
+                                // Right swipe - Indent the line
+                                indentLine(direction: .right)
+                            } else if value.translation.width < 0 {
+                                // Left swipe - Outdent the line
+                                indentLine(direction: .left)
+                            }
+                        })
             }
-            .padding(.top, -20)
-            .padding(.horizontal, 20)
-            .padding(.bottom, -10)
-
-            // Content area
-            TextEditor(text: $rawContent.onChange(addBulletPoints))
-                .font(.custom("Copperplate", size: 20))
-                .focused($isContentFocused)
-                .foregroundColor(Color(red: 87 / 255, green: 87 / 255, blue: 87 / 255))
-                .padding(EdgeInsets(top: 5, leading: 32, bottom: 0, trailing: 32)) // Further reduced top padding for content
-                .frame(minHeight: 600)
-                .cornerRadius(2)
-                .shadow(color: .black.opacity(0.25), radius: 4, x: 0, y: 2)
-                .gesture(DragGesture(minimumDistance: 30, coordinateSpace: .local)
-                    .onEnded { value in
-                        if value.translation.width > 0 {
-                            // Right swipe - Indent the line
-                            indentLine(direction: .right)
-                        } else if value.translation.width < 0 {
-                            // Left swipe - Outdent the line
-                            indentLine(direction: .left)
-                        }
-                    })
-        }
-        .padding(.top, 10)
-        .background(Color(red: 0.97, green: 0.97, blue: 0.97))
-        .ignoresSafeArea(.keyboard)
-        .navigationBarBackButtonHidden(true)
-        .onDisappear {
-            saveNote()
-        }
-        .onAppear {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                self.isTitleFocused = true
+            .padding(.top, 10)
+            .ignoresSafeArea(.keyboard)
+            .navigationBarBackButtonHidden(true)
+            .onDisappear {
+                saveNote()
+            }
+            .onAppear {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    self.isTitleFocused = true
+                }
             }
         }
+
     }
 
 
