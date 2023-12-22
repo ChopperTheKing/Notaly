@@ -11,6 +11,7 @@ import UIKit
 struct UITextViewWrapper: UIViewRepresentable {
     @Binding var text: String
     var onDone: (() -> Void)?
+    let placeholder: String
 
     func makeUIView(context: Context) -> UITextView {
         let textView = UITextView()
@@ -25,11 +26,21 @@ struct UITextViewWrapper: UIViewRepresentable {
         if nil != onDone {
             textView.returnKeyType = .done
         }
+        if text.isEmpty {
+            textView.text = placeholder
+            textView.textColor = UIColor.lightGray
+        }
         return textView
     }
 
     func updateUIView(_ uiView: UITextView, context: Context) {
-        uiView.text = text
+        if text.isEmpty {
+            uiView.text = placeholder
+            uiView.textColor = UIColor.lightGray
+        } else if uiView.text == placeholder {
+            uiView.text = text
+            uiView.textColor = UIColor(red: 87 / 255, green: 87 / 255, blue: 87 / 255, alpha: 1)
+        }
     }
 
     func makeCoordinator() -> Coordinator {
@@ -47,6 +58,20 @@ struct UITextViewWrapper: UIViewRepresentable {
             self.parent.text = textView.text
         }
 
+        func textViewDidBeginEditing(_ textView: UITextView) {
+            if textView.textColor == UIColor.lightGray {
+                textView.text = nil
+                textView.textColor = UIColor(red: 87 / 255, green: 87 / 255, blue: 87 / 255, alpha: 1)
+            }
+        }
+        
+        func textViewDidEndEditing(_ textView: UITextView) {
+            if textView.text.isEmpty {
+                textView.text = parent.placeholder
+                textView.textColor = UIColor.lightGray
+            }
+        }
+        
         func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
             if text == "\n" {
                 // Insert bullet point when 'Enter' is pressed
@@ -82,10 +107,9 @@ struct AddNoteView: View {
     @FocusState private var isTitleFocused: Bool
     @FocusState private var isContentFocused: Bool
     
-    
     @Environment(\.presentationMode) var presentationMode
     @Environment(\.dismiss) var dismiss
-
+    
     init(notes: Binding<[Note]>, note: Note? = nil) {
         _notes = notes
         _note = State(initialValue: note)
@@ -104,28 +128,43 @@ struct AddNoteView: View {
                     Button(action: {
                         presentationMode.wrappedValue.dismiss()
                     }) {
-                        HStack {
-                            Image(systemName: "arrow.backward")
-                            Text("Back")
-                        }
+                        Image("back")
+                            .offset(x: 15)
                     }
                     .padding()
 
                     Spacer()
 
                     // Cancel Button
-                    Button("Cancel") {
+                    Button(action: {
+                        // Define the cancel action
                         dismiss()
+                    }) {
+                        HStack {
+                            Spacer() // Push the content to the center
+                            Text("Cancel")
+                                .font(.custom("Copperplate", size: 24))
+                                .foregroundColor(Color(red: 87/255, green: 87/255, blue: 87/255)) // Set the text color
+                                .offset(x: 22)
+                            Spacer() // Push the content to the center
+                        }
+
                     }
                     .padding()
 
                     // Save Button
-                    Button("Save") {
+                    Button(action: {
                         // Action to save changes
                         saveNote()
                         presentationMode.wrappedValue.dismiss()
+                    }) {
+                        Text("Save")
+                            .font(.custom("Copperplate", size: 24)) // Apply font to the Text view
+                            .foregroundColor(Color(red: 87/255, green: 87/255, blue: 87/255)) // Set the text color
+                            .offset(x: -15)
                     }
                     .padding()
+
                 }
                 // Title box
                 ZStack {
@@ -133,9 +172,9 @@ struct AddNoteView: View {
                         .foregroundColor(Color(red: 0.97, green: 0.97, blue: 0.97))
                         .frame(width: 329, height: 60)
                         .cornerRadius(2)
-                        .shadow(color: .black.opacity(0.25), radius: 4, x: 0, y: 2)
+                        .shadow(color: .black.opacity(0.25), radius: 4.5, x: 0, y: 4)
 
-                    TextField("Title", text: $title)
+                    TextField("", text: $title)
                         .focused($isTitleFocused)
                         .onSubmit {
                             // Shift focus to the content when 'Enter' is pressed
@@ -152,7 +191,7 @@ struct AddNoteView: View {
                 .padding(.bottom, -10)
 
                 // Content area
-                UITextViewWrapper(text: $rawContent)
+                UITextViewWrapper(text: $rawContent, placeholder: "")
                     .frame(minHeight: 600) // Set the height for your UITextView
                     .font(.custom("Copperplate", size: 20))
                     .focused($isContentFocused)
@@ -160,7 +199,7 @@ struct AddNoteView: View {
                     .padding(EdgeInsets(top: 5, leading: 32, bottom: 0, trailing: 32)) // Further reduced top padding for content
                     .frame(minHeight: 600)
                     .cornerRadius(2)
-                    .shadow(color: .black.opacity(0.25), radius: 4, x: 0, y: 2)
+                    .shadow(color: .black.opacity(0.25), radius: 4.5, x: 0, y: 4)
                     .gesture(DragGesture(minimumDistance: 30, coordinateSpace: .local)
                         .onEnded { value in
                             if value.translation.width > 0 {
@@ -187,9 +226,6 @@ struct AddNoteView: View {
 
     }
 
-
-
-
     // Add the saveNote function here
     private func saveNote() {
         if let editingNote = note {
@@ -204,7 +240,6 @@ struct AddNoteView: View {
             notes.append(newNote)
         }
     }
-
 
     private var focusedText: String {
         if isTitleFocused {
