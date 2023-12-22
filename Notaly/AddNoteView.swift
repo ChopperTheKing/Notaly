@@ -110,12 +110,24 @@ struct AddNoteView: View {
     @Environment(\.presentationMode) var presentationMode
     @Environment(\.dismiss) var dismiss
     
+    private let originalTitle: String
+    private let originalContent: String
+    
     init(notes: Binding<[Note]>, note: Note? = nil) {
         _notes = notes
         _note = State(initialValue: note)
+        
+        // Save the original values
         if let editingNote = note {
             _title = State(initialValue: editingNote.title)
             _rawContent = State(initialValue: editingNote.content)
+            originalTitle = editingNote.title
+            originalContent = editingNote.content
+        } else {
+            _title = State(initialValue: "")
+            _rawContent = State(initialValue: "")
+            originalTitle = ""
+            originalContent = ""
         }
     }
     
@@ -138,6 +150,8 @@ struct AddNoteView: View {
                     // Cancel Button
                     Button(action: {
                         // Define the cancel action
+                        title = originalTitle
+                        rawContent = originalContent
                         dismiss()
                     }) {
                         HStack {
@@ -154,9 +168,14 @@ struct AddNoteView: View {
 
                     // Save Button
                     Button(action: {
-                        // Action to save changes
-                        saveNote()
-                        presentationMode.wrappedValue.dismiss()
+                        // Dismiss the keyboard by resetting the focus states
+                        isTitleFocused = false
+                        isContentFocused = false
+                        // You can also add any other logic you want to perform on save here
+
+                        // Dismiss the view if needed
+
+
                     }) {
                         Text("Save")
                             .font(.custom("Copperplate", size: 24)) // Apply font to the Text view
@@ -174,7 +193,7 @@ struct AddNoteView: View {
                         .cornerRadius(2)
                         .shadow(color: .black.opacity(0.25), radius: 4.5, x: 0, y: 4)
 
-                    TextField("", text: $title)
+                    TextField("Title", text: $title)
                         .focused($isTitleFocused)
                         .onSubmit {
                             // Shift focus to the content when 'Enter' is pressed
