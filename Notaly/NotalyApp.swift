@@ -11,7 +11,7 @@ import SwiftUI
 struct NotalyApp: App {
     var body: some Scene {
         WindowGroup {
-            NotesListView()
+            MainTabView()
         }
     }
 }
