@@ -13,13 +13,16 @@ struct KeyboardResponsiveModifier: ViewModifier {
 
     func body(content: Content) -> some View {
         content
-            .offset(y: -offset)
+            .padding(.bottom, offset)
             .onAppear {
                 NotificationCenter.default.addObserver(
                     forName: UIResponder.keyboardWillShowNotification,
                     object: nil, queue: .main) { notification in
                         guard let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue else { return }
-                        offset = keyboardSize.height
+                        let screenHeight = UIScreen.main.bounds.height
+                        let bottomSafeAreaInset = UIApplication.shared.windows.first?.safeAreaInsets.bottom ?? 0
+                        let calculatedOffset = screenHeight - keyboardSize.origin.y - bottomSafeAreaInset
+                        offset = max(0, calculatedOffset)
                     }
 
                 NotificationCenter.default.addObserver(

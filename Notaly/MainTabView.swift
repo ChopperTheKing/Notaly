@@ -26,16 +26,13 @@ struct MainTabView: View {
                 }
                 .tag(1)
         }
-        .padding(.bottom, isTabBarVisible ? 100 : 0) // Conditional padding based on tab bar visibility
+        .padding(.bottom, isTabBarVisible ? 0 : -100) // Adjust padding to hide the tab bar
         .overlay(
             VStack {
                 Spacer()
-                if isTabBarVisible {
-                    CustomTabBarView(selectedTab: $selectedTab)
-                } else {
-                    CustomTabBarView(selectedTab: $selectedTab)
-                        .frame(width: 0, height: 0) // When not visible, take no space
-                }
+                CustomTabBarView(selectedTab: $selectedTab)
+                    .frame(height: isTabBarVisible ? 100 : 0) // Adjust frame based on visibility
+                    .opacity(isTabBarVisible ? 1 : 0) // Adjust opacity based on visibility
             },
             alignment: .bottom
         )
