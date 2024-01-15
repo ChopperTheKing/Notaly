@@ -15,6 +15,7 @@ struct SettingsView: View {
     @State private var selectedNote: Note?
     @State private var activeNote: Note? = nil // State to control navigation
     @State private var isNoteViewActive = false
+    @Binding var isTabBarVisible: Bool // Added binding for tab bar visibility
     
     var body: some View {
             NavigationStack {
@@ -80,6 +81,12 @@ struct SettingsView: View {
                         
                         .navigationDestination(isPresented: $isNoteViewActive) {
                             AddNoteView(notes: $notes) // Adjust as per your AddNoteView initializer
+                                .onAppear {
+                                    self.isTabBarVisible = false // Hide tab bar when AddNoteView appears
+                                }
+                                .onDisappear {
+                                    self.isTabBarVisible = true // Show tab bar when AddNoteView disappears
+                                }
                         }
                     }
                 }
@@ -91,4 +98,3 @@ struct SettingsView: View {
         notes.remove(atOffsets: offsets)
     }
 }
-

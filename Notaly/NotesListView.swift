@@ -15,6 +15,7 @@ struct NotesListView: View {
     @State private var selectedNote: Note?
     @State private var activeNote: Note? = nil // State to control navigation
     @State private var isNoteViewActive = false
+    @Binding var isTabBarVisible: Bool // Added binding to control the visibility of the tab bar
 
     var body: some View {
         TabView(selection: $selectedTab) {
@@ -24,7 +25,10 @@ struct NotesListView: View {
                     VStack {
                         CustomNavigationView(
                             leadingAction: { showingFolders.toggle() },
-                            trailingAction: { isNoteViewActive = true }, // Sets the state to true to activate NavigationLink
+                            trailingAction: {
+                                self.isTabBarVisible = false // Hide the tab bar
+                                isNoteViewActive = true
+                            },
                             logo: Image("logo")
                         )
                         .padding([.horizontal, .top])
@@ -81,8 +85,11 @@ struct NotesListView: View {
                         
                         .navigationDestination(isPresented: $isNoteViewActive) {
                             AddNoteView(notes: $notes)
+                                .onAppear {
+                                    self.isTabBarVisible = false // Hide the tab bar
+                                }
                                 .onDisappear {
-                                    self.notes = self.notes
+                                    self.isTabBarVisible = true // Show the tab bar
                                 }
                         }
                     }
@@ -137,7 +144,7 @@ struct NoteRowView: View {
 
 struct NotesListView_Previews: PreviewProvider {
     static var previews: some View {
-        NotesListView()
+        NotesListView(isTabBarVisible: .constant(true)) // Pass the binding to the isTabBarVisible state
     }
 }
 

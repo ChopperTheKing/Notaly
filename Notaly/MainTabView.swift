@@ -10,16 +10,17 @@ import SwiftUI
 
 struct MainTabView: View {
     @State private var selectedTab = 0
+    @State private var isTabBarVisible = true
 
     var body: some View {
         TabView(selection: $selectedTab) {
-            NotesListView()
+            NotesListView(isTabBarVisible: $isTabBarVisible)
                 .tabItem {
                     EmptyView() // Empty because CustomTabBarView will handle the display
                 }
                 .tag(0)
 
-            SettingsView()
+            SettingsView(isTabBarVisible: $isTabBarVisible)
                 .tabItem {
                     EmptyView() // Empty because CustomTabBarView will handle the display
                 }
@@ -28,7 +29,9 @@ struct MainTabView: View {
         .overlay(
             VStack {
                 Spacer()
-                CustomTabBarView(selectedTab: $selectedTab)
+                if isTabBarVisible {
+                    CustomTabBarView(selectedTab: $selectedTab)
+                }
             },
             alignment: .bottom
         )

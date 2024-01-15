@@ -94,7 +94,7 @@ private extension String {
         let prefixIndex = self.index(self.startIndex, offsetBy: index)
         let prefix = self[..<prefixIndex]
         let suffix = self[prefixIndex...]
-        return "\(prefix)â¢ \(suffix)"
+        return "\(prefix)Ã¢ÂÂ¢ \(suffix)"
     }
 }
 
@@ -233,7 +233,7 @@ struct AddNoteView: View {
             }
             .padding(.top, 10)
             .ignoresSafeArea(.keyboard)
-            .navigationBarBackButtonHidden(true)
+            .navigationBarHidden(true) // Add this to hide the navigation bar
             .onDisappear {
                 saveNote() // Ensure note is saved when the view disappears
             }
@@ -307,18 +307,18 @@ struct AddNoteView: View {
             if line.isEmpty {
                 // If the line is empty, it's a new line after pressing Enter
                 // Use the last known indentation and add a bullet point
-                processedLines.append("\(lastIndentation)â¢ ")
+                processedLines.append("\(lastIndentation)Ã¢ÂÂ¢ ")
             } else {
                 // Extract the indentation from the current line
                 let currentIndentation = line.prefix(while: { $0 == "\t" || $0 == " " })
                 lastIndentation = String(currentIndentation)
 
-                if line.trimmingCharacters(in: .whitespaces) == "â¢" {
+                if line.trimmingCharacters(in: .whitespaces) == "Ã¢ÂÂ¢" {
                     // If the line is only a bullet point, remove it
                     continue
                 } else {
                     // Add a bullet point if it's not already there
-                    let adjustedLine = line.starts(with: "\(currentIndentation)â¢ ") ? line : "\(currentIndentation)â¢ " + line.trimmingCharacters(in: .whitespaces)
+                    let adjustedLine = line.starts(with: "\(currentIndentation)Ã¢ÂÂ¢ ") ? line : "\(currentIndentation)Ã¢ÂÂ¢ " + line.trimmingCharacters(in: .whitespaces)
                     processedLines.append(String(adjustedLine))
                 }
             }
@@ -329,7 +329,7 @@ struct AddNoteView: View {
     private func addInitialBulletPoint() {
         // Add an initial bullet point if the content is empty
         if rawContent.isEmpty {
-            rawContent = "â¢ "
+            rawContent = "Ã¢ÂÂ¢ "
         }
     }
 }
