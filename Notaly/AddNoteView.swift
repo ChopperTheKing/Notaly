@@ -94,7 +94,7 @@ private extension String {
         let prefixIndex = self.index(self.startIndex, offsetBy: index)
         let prefix = self[..<prefixIndex]
         let suffix = self[prefixIndex...]
-        return "\(prefix)• \(suffix)"
+        return "\(prefix)â¢ \(suffix)"
     }
 }
 
@@ -138,6 +138,7 @@ struct AddNoteView: View {
                 HStack {
                     // Back Button
                     Button(action: {
+                        saveNote() // Call saveNote before dismissing the view
                         presentationMode.wrappedValue.dismiss()
                     }) {
                         Image("back")
@@ -234,7 +235,7 @@ struct AddNoteView: View {
             .ignoresSafeArea(.keyboard)
             .navigationBarBackButtonHidden(true)
             .onDisappear {
-                saveNote()
+                saveNote() // Ensure note is saved when the view disappears
             }
             .onAppear {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
@@ -296,9 +297,6 @@ struct AddNoteView: View {
         rawContent = lines.joined(separator: "\n")
     }
 
-    
-
-
     // Function to add bullet points
     func addBulletPoints(_ newText: String) {
         let lines = newText.split(separator: "\n", omittingEmptySubsequences: false)
@@ -309,18 +307,18 @@ struct AddNoteView: View {
             if line.isEmpty {
                 // If the line is empty, it's a new line after pressing Enter
                 // Use the last known indentation and add a bullet point
-                processedLines.append("\(lastIndentation)• ")
+                processedLines.append("\(lastIndentation)â¢ ")
             } else {
                 // Extract the indentation from the current line
                 let currentIndentation = line.prefix(while: { $0 == "\t" || $0 == " " })
                 lastIndentation = String(currentIndentation)
 
-                if line.trimmingCharacters(in: .whitespaces) == "•" {
+                if line.trimmingCharacters(in: .whitespaces) == "â¢" {
                     // If the line is only a bullet point, remove it
                     continue
                 } else {
                     // Add a bullet point if it's not already there
-                    let adjustedLine = line.starts(with: "\(currentIndentation)• ") ? line : "\(currentIndentation)• " + line.trimmingCharacters(in: .whitespaces)
+                    let adjustedLine = line.starts(with: "\(currentIndentation)â¢ ") ? line : "\(currentIndentation)â¢ " + line.trimmingCharacters(in: .whitespaces)
                     processedLines.append(String(adjustedLine))
                 }
             }
@@ -328,17 +326,12 @@ struct AddNoteView: View {
         rawContent = processedLines.joined(separator: "\n")
     }
 
-
-
     private func addInitialBulletPoint() {
         // Add an initial bullet point if the content is empty
         if rawContent.isEmpty {
-            rawContent = "• "
+            rawContent = "â¢ "
         }
     }
-
-
-
 }
 
 // Extension to provide onChange functionality for the TextEditor
@@ -366,4 +359,3 @@ struct AddNoteView_Previews: PreviewProvider {
 enum SwipeDirection {
     case left, right
 }
-

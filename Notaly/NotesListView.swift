@@ -80,7 +80,10 @@ struct NotesListView: View {
                         .listStyle(.plain)
                         
                         .navigationDestination(isPresented: $isNoteViewActive) {
-                            AddNoteView(notes: $notes) // Adjust as per your AddNoteView initializer
+                            AddNoteView(notes: $notes)
+                                .onDisappear {
+                                    self.notes = self.notes
+                                }
                         }
                     }
                 }
@@ -152,4 +155,3 @@ extension View {
         modifier(HideDisclosureIndicator())
     }
 }
-
