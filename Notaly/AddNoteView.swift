@@ -94,7 +94,7 @@ private extension String {
         let prefixIndex = self.index(self.startIndex, offsetBy: index)
         let prefix = self[..<prefixIndex]
         let suffix = self[prefixIndex...]
-        return "\(prefix)Ã¢ÂÂ¢ \(suffix)"
+        return "\(prefix)ÃÂ¢ÃÂÃÂ¢ \(suffix)"
     }
 }
 
@@ -216,7 +216,7 @@ struct AddNoteView: View {
                     .font(.custom("Copperplate", size: 20))
                     .focused($isContentFocused)
                     .foregroundColor(Color(red: 87 / 255, green: 87 / 255, blue: 87 / 255))
-                    .padding(EdgeInsets(top: 5, leading: 32, bottom: 0, trailing: 32)) // Further reduced top padding for content
+                    .padding(EdgeInsets(top: 5, leading: 32, bottom: 5, trailing: 32)) // Adjust padding to ignore tab bar space
                     .frame(minHeight: 600)
                     .cornerRadius(2)
                     .shadow(color: .black.opacity(0.25), radius: 4.5, x: 0, y: 4)
@@ -307,18 +307,18 @@ struct AddNoteView: View {
             if line.isEmpty {
                 // If the line is empty, it's a new line after pressing Enter
                 // Use the last known indentation and add a bullet point
-                processedLines.append("\(lastIndentation)Ã¢ÂÂ¢ ")
+                processedLines.append("\(lastIndentation)ÃÂ¢ÃÂÃÂ¢ ")
             } else {
                 // Extract the indentation from the current line
                 let currentIndentation = line.prefix(while: { $0 == "\t" || $0 == " " })
                 lastIndentation = String(currentIndentation)
 
-                if line.trimmingCharacters(in: .whitespaces) == "Ã¢ÂÂ¢" {
+                if line.trimmingCharacters(in: .whitespaces) == "ÃÂ¢ÃÂÃÂ¢" {
                     // If the line is only a bullet point, remove it
                     continue
                 } else {
                     // Add a bullet point if it's not already there
-                    let adjustedLine = line.starts(with: "\(currentIndentation)Ã¢ÂÂ¢ ") ? line : "\(currentIndentation)Ã¢ÂÂ¢ " + line.trimmingCharacters(in: .whitespaces)
+                    let adjustedLine = line.starts(with: "\(currentIndentation)ÃÂ¢ÃÂÃÂ¢ ") ? line : "\(currentIndentation)ÃÂ¢ÃÂÃÂ¢ " + line.trimmingCharacters(in: .whitespaces)
                     processedLines.append(String(adjustedLine))
                 }
             }
@@ -329,7 +329,7 @@ struct AddNoteView: View {
     private func addInitialBulletPoint() {
         // Add an initial bullet point if the content is empty
         if rawContent.isEmpty {
-            rawContent = "Ã¢ÂÂ¢ "
+            rawContent = "ÃÂ¢ÃÂÃÂ¢ "
         }
     }
 }
