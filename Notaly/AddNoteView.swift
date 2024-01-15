@@ -112,10 +112,12 @@ struct AddNoteView: View {
     
     private let originalTitle: String
     private let originalContent: String
+    @Binding var isTabBarVisible: Bool // Added this line for the isTabBarVisible binding
     
-    init(notes: Binding<[Note]>, note: Note? = nil) {
+    init(notes: Binding<[Note]>, note: Note? = nil, isTabBarVisible: Binding<Bool>) { // Added isTabBarVisible to the initializer
         _notes = notes
         _note = State(initialValue: note)
+        _isTabBarVisible = isTabBarVisible // Set the binding
         
         // Save the original values
         if let editingNote = note {
@@ -352,7 +354,7 @@ struct AddNoteView_Previews: PreviewProvider {
                                       Note(title: "Sample Note 2", content: "Sample Content 2")]
 
     static var previews: some View {
-        AddNoteView(notes: $previewNotes)
+        AddNoteView(notes: $previewNotes, isTabBarVisible: .constant(true)) // Pass the isTabBarVisible binding
     }
 }
 
